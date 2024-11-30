@@ -2,8 +2,11 @@
 Task Allocation
 
 Member 1: Non-Preemptive Priority Scheduling
+
 • Implement the PriorityScheduler class.
+
 • Handle process sorting based on priority.
+
 • Include context-switching logic.
 
 Member 2: Non-Preemptive SJF (Shortest Job First)
