@@ -19,14 +19,15 @@ public class Main {
             String name = scanner.nextLine();
             System.out.println("Enter arrival time ");
             int arrivalTime = scanner.nextInt();
-            System.out.println("Enter initial burst time ");
-            int initialBurstTime = scanner.nextInt();
+            System.out.println("Enter burst time ");
+            int burstTime = scanner.nextInt();
             System.out.println("Enter priority");
             int priority = scanner.nextInt();
+            System.out.println("Enter process quantum time");
+            int quantumTime = scanner.nextInt();
 
-            processes[i] = new Process(name,arrivalTime,initialBurstTime,priority);
-
-
+            processes[i] = new Process(name,arrivalTime,burstTime,priority);
+            processes[i].setQuantum(quantumTime);
         }
     }
 }
