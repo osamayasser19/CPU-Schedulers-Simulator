@@ -1,6 +1,5 @@
 package org.example;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -9,9 +8,9 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
+        List<Process> processes = new ArrayList<>();
         System.out.println("Enter number of processes: ");
         int numOfProcesses = scanner.nextInt();
-        Process[] processes = new Process[numOfProcesses];
         System.out.println("Enter context switching time:");
         int contextSwitchTime = scanner.nextInt();
 
@@ -30,29 +29,16 @@ public class Main {
             System.out.println("Enter process quantum time");
             int quantumTime = scanner.nextInt();
 
-            processes[i] = new Process(name,arrivalTime,burstTime,priority);
-            processes[i].setQuantum(quantumTime);
+
+            processes.add(new Process(name,arrivalTime,burstTime,priority));
+            processes.get(i).setQuantum(quantumTime);
         }
+
+//        FCAIScheduler fcaiScheduler = new FCAIScheduler(processes);
+//        fcaiScheduler.schedule();
+        NonPreemptivePriorityScheduler scheduler = new NonPreemptivePriorityScheduler();
+        scheduler.schedule(processes, contextSwitchTime);
+        scanner.close();
+
     }
 }
-//public class Main {
-//    public static void main(String[] args) {
-//        Scanner scanner = new Scanner(System.in);
-//        List<Process> processes = new ArrayList<>();
-//        System.out.println("Enter the number of processes:");
-//        int n = scanner.nextInt();
-//        System.out.println("Enter context switching time:");
-//        int contextSwitchTime = scanner.nextInt();
-//        for (int i = 0; i < n; i++) {
-//            System.out.println("Enter details for Process " + (i + 1) + " (Name ArrivalTime BurstTime Priority):");
-//            String name = scanner.next();
-//            int arrivalTime = scanner.nextInt();
-//            int burstTime = scanner.nextInt();
-//            int priority = scanner.nextInt();
-//            processes.add(new Process(name, arrivalTime, burstTime, priority));
-//        }
-//        NonPreemptivePriorityScheduler scheduler = new NonPreemptivePriorityScheduler();
-//        scheduler.schedule(processes, contextSwitchTime);
-//        scanner.close();
-//    }
-//}
