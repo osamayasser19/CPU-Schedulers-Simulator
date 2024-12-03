@@ -1,16 +1,17 @@
 package org.example;
+
 public class Process {
-     String name;
-     int arrivalTime;
-    private int remainingBurstTime;
-     int burstTime;
-     int priority;
-     int turnRoundTime;
-     int waitingTime;
-    private boolean startedExecution;
-    private int fcaiFactor;
-    private int Quantum;
-    private int executedTime;
+    public String name;
+    public int arrivalTime;
+    public int remainingBurstTime;
+    public int burstTime;
+    public int priority;
+    public int turnRoundTime;
+    public int waitingTime;
+    public boolean startedExecution;
+    public int fcaiFactor;
+    public int Quantum;
+    public int executedTime;
 
 
     public Process(String n, int a,int b,int p){
@@ -63,6 +64,10 @@ public class Process {
 
     public int getReamininBurstTime() {
         return remainingBurstTime;
+    }
+
+    void setRemainingBurstTime(int t){
+        remainingBurstTime = t;
     }
 
     public int getPriority(){
