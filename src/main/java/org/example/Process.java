@@ -1,13 +1,12 @@
 package org.example;
-
 public class Process {
-    private String name;
-    private int arrivalTime;
+     String name;
+     int arrivalTime;
     private int remainingBurstTime;
-    private int burstTime;
-    private int priority;
-    private int turnRoundTime;
-    private int waitingTime;
+     int burstTime;
+     int priority;
+     int turnRoundTime;
+     int waitingTime;
     private boolean startedExecution;
     private int fcaiFactor;
     private int Quantum;
