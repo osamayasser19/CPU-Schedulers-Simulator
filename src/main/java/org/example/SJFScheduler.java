@@ -1,59 +1,96 @@
 package org.example;
-
 import java.util.*;
 
 public class SJFScheduler {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
-    // Method to calculate Waiting Time and Turnaround Time for each process
-    public static void calculateTimes(List<Process> processes) {
-        int totalTime = 0;
-        for (Process process : processes) {
-            totalTime += process.getBurstTime();
+        System.out.print("Enter number of processes: ");
+        int numProcesses = scanner.nextInt();
+
+        System.out.print("Enter context switching time: ");
+        int contextSwitchingTime = scanner.nextInt();
+
+        List<Process> processes = new ArrayList<>();
+
+        for (int i = 0; i < numProcesses; i++) {
+            System.out.print("Enter process name: ");
+            String name = scanner.next();
+
+            System.out.print("Enter arrival time: ");
+            int arrivalTime = scanner.nextInt();
+
+            System.out.print("Enter burst time: ");
+            int burstTime = scanner.nextInt();
+
+            System.out.print("Enter priority: ");
+            int priority = scanner.nextInt();
+
+            processes.add(new Process(name, arrivalTime, burstTime, priority));
         }
 
-        int waitingTimeSum = 0;
-        int turnaroundTimeSum = 0;
+        // Sort processes by arrival time
+        processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
 
-        for (Process process : processes) {
-            process.turnRoundTime = totalTime - process.getArrivalTime() - process.getBurstTime();
-            process.waitingTime = process.turnRoundTime - process.getArrivalTime();
-            waitingTimeSum += process.waitingTime;
-            turnaroundTimeSum += process.turnRoundTime;
-        }
-
-        System.out.println("Average Waiting Time: " + (waitingTimeSum * 1.0 / processes.size()));
-        System.out.println("Average Turnaround Time: " + (turnaroundTimeSum * 1.0 / processes.size()));
-    }
-
-    // SJF Scheduling algorithm
-    public static void sjfScheduling(List<Process> processes) {
-        // Sort processes based on their burst time (ascending order)
-        processes.sort(Comparator.comparingInt(Process::getBurstTime));
-
+        // Implement SJF Non-Preemptive Scheduling
         int currentTime = 0;
-        for (Process process : processes) {
-            if (process.getArrivalTime() > currentTime) {
-                currentTime = process.getArrivalTime(); // Wait for the process to arrive
+        int completedProcesses = 0;
+        List<Process> executionOrder = new ArrayList<>();
+
+        while (completedProcesses < numProcesses) {
+            Process currentProcess = null;
+            int minBurstTime = Integer.MAX_VALUE;
+
+            for (Process process : processes) {
+                if (process.arrivalTime <= currentTime && !process.startedExecution && process.remainingBurstTime < minBurstTime) {
+                    minBurstTime = process.remainingBurstTime;
+                    currentProcess = process;
+                }
             }
 
-            // Execute the process
-            currentTime += process.getBurstTime();
-            System.out.println("Process " + process.getName() + " executed from " + (currentTime - process.getBurstTime()) + " to " + currentTime);
+            if (currentProcess == null) {
+                currentTime++;
+                continue;
+            }
+
+            currentProcess.startedExecution = true;
+            currentProcess.waitingTime = currentTime - currentProcess.arrivalTime;
+            currentTime += currentProcess.burstTime + contextSwitchingTime;
+            currentProcess.turnRoundTime = currentTime - currentProcess.arrivalTime;
+            currentProcess.remainingBurstTime = 0;
+            executionOrder.add(currentProcess);
+            completedProcesses++;
         }
 
-        // Calculate and print times (waiting time, turnaround time)
-        calculateTimes(processes);
-    }
+        // Calculate average waiting time and turnaround time
+        double totalWaitingTime = 0;
+        double totalTurnAroundTime = 0;
 
-    public static void main(String[] args) {
-        // Create processes (name, arrivalTime, burstTime, priority)
-        List<Process> processes = new ArrayList<>();
-        processes.add(new Process("P1", 0, 6, 1));
-        processes.add(new Process("P2", 1, 8, 2));
-        processes.add(new Process("P3", 2, 7, 3));
-        processes.add(new Process("P4", 3, 3, 4));
+        for (Process process : processes) {
+            totalWaitingTime += process.waitingTime;
+            totalTurnAroundTime += process.turnRoundTime;
+        }
 
-        // Run SJF Scheduling
-        sjfScheduling(processes);
+        double averageWaitingTime = totalWaitingTime / numProcesses;
+        double averageTurnAroundTime = totalTurnAroundTime / numProcesses;
+
+        // Output the results
+        System.out.println("Processes execution order:");
+        for (Process process : executionOrder) {
+            System.out.println(process.name);
+        }
+
+        System.out.println("Waiting Time for each process:");
+        for (Process process : processes) {
+            System.out.println(process.name + ": " + process.waitingTime);
+        }
+
+        System.out.println("Turnaround Time for each process:");
+        for (Process process : processes) {
+            System.out.println(process.name + ": " + process.turnRoundTime);
+        }
+
+        System.out.println("Average Waiting Time: " + averageWaitingTime);
+        System.out.println("Average Turnaround Time: " + averageTurnAroundTime);
     }
 }
