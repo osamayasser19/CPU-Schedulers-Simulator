@@ -110,8 +110,8 @@ public class FCAIScheduler{
                 //Process are entering ready queue based on arrival time
                 for(Process process:processes){
                     if(process.getArrivalTime() >= time && !readyQueue.contains(process)){
-                        readyQueue.add(process);
                         calculateFcaiFactor(process);
+                        readyQueue.add(process);
                         readyQueue.sort(Comparator.comparingInt(Process::getFcaiFactor)); //Sort ready queue based on fcai factor each time new process arrives
                     }
                 }
