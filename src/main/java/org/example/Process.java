@@ -32,13 +32,11 @@ public class Process {
         fcaiFactor = factor;
     }
 
-    ;
 
     public int getFcaiFactor() {
         return fcaiFactor;
     }
 
-    ;
 
     void setQuantum(int quantum) {
         Quantum = quantum;
@@ -71,7 +69,7 @@ public class Process {
         return arrivalTime;
     }
 
-    public int getReamininBurstTime() {
+    public int getRemainingBurstTime() {
         return remainingBurstTime;
     }
 
@@ -101,5 +99,8 @@ public class Process {
     }
     public boolean hasStartedExecution() {
         return startedExecution;
+    }
+    public void setRemainingBurstTime(int time) {
+        remainingBurstTime = time;
     }
 }
