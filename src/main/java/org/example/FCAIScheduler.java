@@ -193,32 +193,47 @@ public class FCAIScheduler {
     void scheduler() {
         int time = 0;
         while (!processes.isEmpty() || !readyQueue.isEmpty()) {
+            System.out.println("hello1");
             AdjustReadyQueue(time);//add the arrived processes to the ready queue or remove a process when its finished
             calcFactors(readyQueue);//calculate the Factors
             readyQueue.sort(Comparator.comparingInt(Process::getFcaiFactor));//sort the ready queue to get the least Fcai Factor which is at index 0
 
             if (!readyQueue.isEmpty()) {
-                Process currentProcess = readyQueue.getFirst();
-                int quantum = currentProcess.getQuantum();
-                int executionTime = (int) ceil(0.4 * quantum);
+                Process currentProcess = readyQueue.getFirst();//get the current process we will work on which is the first one in the ready queue
+                int quantum = currentProcess.getQuantum();//get the quantum of the current process
+                int executionTime = (int) ceil(0.4 * quantum);//calculate the 0.4 of the quantum
                 int executedTime = 0;
 
                 while (executedTime < executionTime) {
+                    System.out.println("hello1");
+
                     runProcess(currentProcess, executedTime);//run the process
                     executedTime++;//update the executedTime
                     time++;//update the currentTime
 
                     AdjustReadyQueue(time);//adjust the readyQueue to the new time
                     calcFactors(readyQueue);//calculate the Factors after adjusting the ready queue to see if there is smaller factor
-                    readyQueue.sort(Comparator.comparingInt(Process::getFcaiFactor));
-                    if (readyQueue.getFirst() != currentProcess) {
+                    readyQueue.sort(Comparator.comparingInt(Process::getFcaiFactor));//sorting the ready queue after updating the factors
+                    if (readyQueue.getFirst() != currentProcess) {//check if the first process is still equals the current process which means it still has the least factor
                         break;
                     }
                 }
-                if(executedTime == executionTime && currentProcess.getRemainingBurstTime() > 0) {//check if the process finished or not to update the quantum according to it
+                if (executedTime == executionTime && currentProcess.getRemainingBurstTime() > 0) {//check if the process finished or not to update the quantum according to it
                     currentProcess.setQuantum(currentProcess.getQuantum() + 2);//adding 2 to the quantum because the process used its quantum but still has remaining work
+                } else if (currentProcess.getRemainingBurstTime() > 0) {//check if the process got preemted without finishing its quantum
+                    int remainingQuantum = executionTime - executedTime;//calculating the remaining quantum
+                    currentProcess.setQuantum(currentProcess.getQuantum() + remainingQuantum);//adding the remaining quantum to the original quantum
                 }
 
+                if (currentProcess.getRemainingBurstTime() == 0) {//if the process remaining burst time is zero we remove it
+                    readyQueue.remove(currentProcess);//removing from the ready queue
+                    processes.remove(currentProcess);//removing from the process queue
+                    System.out.println(currentProcess.getName() + " Completed \n");//print a complete message
+                }
+
+
+            } else {//update the time if no process in the ready queue
+                time++;
             }
 
         }
