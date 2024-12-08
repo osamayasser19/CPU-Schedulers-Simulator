@@ -36,11 +36,12 @@ public class Main {
 //        System.out.println(processes.get(0).getArrivalTime());
 //        System.out.println(processes.get(1).getArrivalTime());
 
-        FCAIScheduler fcaiScheduler = new FCAIScheduler(processes);
-        fcaiScheduler.scheduler();
+//        FCAIScheduler fcaiScheduler = new FCAIScheduler(processes);
+//        fcaiScheduler.scheduler();
 //        NonPreemptivePriorityScheduler scheduler = new NonPreemptivePriorityScheduler();
 //        scheduler.schedule(processes, contextSwitchTime);
-
+        SRTFScheduler scheduler = new SRTFScheduler(processes, contextSwitchTime);
+        scheduler.runSimulation();
         scanner.close();
 
     }

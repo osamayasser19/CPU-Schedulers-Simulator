@@ -11,7 +11,7 @@ public class Process {
     private int fcaiFactor;
     private int Quantum;
     private int executedTime=-1;
-    private int completionTime;
+    int completionTime;
     public Process(String n, int a, int b, int p) {
         name = n;
         arrivalTime = a;
