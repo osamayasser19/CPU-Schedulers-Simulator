@@ -62,9 +62,6 @@ public class Main {
                 break;
 
         }
-//        FCAIScheduler fcaiScheduler = new FCAIScheduler(processes);
-//        fcaiScheduler.schedule();
         scanner.close();
-
     }
 }
