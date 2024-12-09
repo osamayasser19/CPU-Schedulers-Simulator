@@ -46,6 +46,7 @@ public class FCAIScheduler {
     }
 
 
+
     //running the process
     void runProcess(Process process) {
 //        executedQuantum++;
@@ -54,7 +55,7 @@ public class FCAIScheduler {
     }
 
     void schedule() {
-        int time = 0, executedQuantum = 0, index = 0;
+        int time = 0, executedQuantum = 0, index = 0 , oldTime = 0;
         Process currentProcess = null;
         Process justExecutedProcess = null;
         boolean switchProcess = false;
@@ -65,21 +66,7 @@ public class FCAIScheduler {
             readyQueue.add(currentProcess);
         }
 
-//        if(!processes.isEmpty())
-//            currentProcess = processes.get(0);
-
-
-//        currentProcess = new Process("Process 1" , 0 ,17 , 4);
-//        currentProcess.setQuantum(4);
-//        time = currentProcess.getArrivalTime();
-//        readyQueue.add(currentProcess);
-//
-//        Process newProcess = new Process("Process 2" , 3 ,4 , 2);
-//        currentProcess.setQuantum(4);
-//        readyQueue.add(newProcess);
-
         while (!readyQueue.isEmpty()) {
-            System.out.println("test awlany \n");
 
             //setting current process in case of the lowest ff process is just executed
             if (readyQueue.size() > 1) {
@@ -101,12 +88,13 @@ public class FCAIScheduler {
             assert currentProcess != null;
             currentProcess.getWait().add(time - currentProcess.getPreemptTime());
 
+            System.out.println("Process "+ currentProcess.getName() + " started execution at " + time);
+
             while (true) {
                 readyQueue.remove(currentProcess); //removing current process from the ready queue before updating its components
-                System.out.println("nth cycle \n");
+
 
                 //running Process
-
                 runProcess(currentProcess);
                 currentProcess.setExecutedQuantum(currentProcess.getExecutedQuantum() + 1);
                 time++;
@@ -123,24 +111,9 @@ public class FCAIScheduler {
                         readyQueue.sort(
                                 Comparator.comparingInt(Process::getFcaiFactor) // Primary sorting by FCAI Factor
                         );
-                        System.out.println("v1 equals "+ getV1());
-                        System.out.println("v2 equals " + getV2());
-                        System.out.println(process.getName() + " arrived and its intial remburttime is "+ process.getRemainingBurstTime());
-                        System.out.println(process.getName() + " arrived" + " its initial ff is: "+ process.getFcaiFactor());
-                        //Sort ready queue based on fcai factor each time new process arrive and if two same ff depend on arrivalTime
                     }
                 }
 
-//                if(readyQueue.size() == 3) {
-//                    System.out.println("This is the second process in the queue: " + readyQueue.get(1).getName() + " and its fcai factor is: " + readyQueue.get(1).getFcaiFactor());
-//                    System.out.println(readyQueue.get(2).getName() + " Fcai factor is: " + readyQueue.get(2).getFcaiFactor());
-//                    System.out.println(readyQueue.get(0).getName() +"and its fcai factor is "+ readyQueue.get(2).getFcaiFactor());
-//                }
-
-
-
-                System.out.println(currentProcess.getName());
-                System.out.println("Time is " + time);
 
 
                 //Handle case if there is another process with lower fcaiFactor
@@ -148,14 +121,13 @@ public class FCAIScheduler {
                     switchProcess = true;
                 }
 
-                System.out.println("switchProcessStatus equal : " + switchProcess);
 
                 //In case one of lower fcaiFactor arrived
                 int preempt = (int) ceil(currentProcess.getQuantum() * 0.4);
 //                System.out.println(preempt);
                 if (preempt <= currentProcess.getExecutedQuantum() && switchProcess) {
 
-                    System.out.println(currentProcess.getName() + " executed for " + currentProcess.getExecutedQuantum() + " seconds and preempted");
+                    System.out.println(currentProcess.getName() + " executed for " + currentProcess.getExecutedQuantum() + " seconds and preempted at " + time);
                     //removing the old instance from the queue
                     readyQueue.remove(currentProcess);
 
@@ -171,6 +143,7 @@ public class FCAIScheduler {
                     //Adding currentProcess to the ready Queue after updating
                     readyQueue.add(currentProcess);
                     System.out.println(currentProcess.getName() + " Updated Quantum is " + currentProcess.getOldQuantum() + "->" + currentProcess.getQuantum());
+                    System.out.println("---------------------------------------------\n");
                     currentProcess.setOldQuantum(currentProcess.getQuantum());
                     currentProcess.setPreemptTime(time);
 
@@ -182,8 +155,7 @@ public class FCAIScheduler {
                     break;
                 } else if (currentProcess.getQuantum() == currentProcess.getExecutedQuantum() && !switchProcess) {
 
-                    System.out.println(currentProcess.getName() + " executed for " + currentProcess.getExecutedQuantum() + " seconds");
-
+                    System.out.println(currentProcess.getName() + " executed for " + currentProcess.getExecutedQuantum() + " seconds and exits at " + time);
                     //removing the old instance from the queue
                     readyQueue.remove(currentProcess);
 
@@ -199,6 +171,8 @@ public class FCAIScheduler {
                     //Adding the process to the queue again after updating
                     readyQueue.add(currentProcess);
                     System.out.println(currentProcess.getName() + " Updated Quantum is " + currentProcess.getOldQuantum() + "->" + currentProcess.getQuantum());
+                    System.out.println("---------------------------------------------\n");
+
                     currentProcess.setOldQuantum(currentProcess.getQuantum());
                     currentProcess.setPreemptTime(time);
                     //Sorting
@@ -218,22 +192,16 @@ public class FCAIScheduler {
                 readyQueue.remove(currentProcess);
                 justExecutedProcess = null;
                 System.out.println(currentProcess.getName() + " Completed \n");
-//                for (Process process : readyQueue)
-//                    System.out.println("B2olk ehhhh " + process.getName());
             }
-
-//            System.out.println(readyQueue.get(0).getName());
 
             //Sort the readyQueue after each process execution
             readyQueue.sort(Comparator.comparingInt(Process::getFcaiFactor));
 
             //switching the flag before entering new process
             switchProcess = false;
-//            counter++;
-////            System.out.println(currentProcess.getRemainingBurstTime());
-//            if(counter == 10)
-//                break;
         }
+
+
         printWT_TT();
         printAVG();
     }
