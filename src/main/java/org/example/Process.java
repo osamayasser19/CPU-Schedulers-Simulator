@@ -116,7 +116,7 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.awt.Color;
 public class Process {
     public String name;
     public int arrivalTime;
@@ -134,7 +134,7 @@ public class Process {
     public int executedTime = 0;
     public int executedQuantum = 0;
     public int completionTime;
-
+    Color color;
     public int getPreemptTime() {
         return preemptTime;
     }
@@ -162,13 +162,14 @@ public class Process {
     }
 
 
-    public Process(String n, int a, int b, int p) {
+    public Process(String n, int a, int b, int p,Color color) {
         name = n;
         arrivalTime = a;
         burstTime = b;
         remainingBurstTime = b;
         priority = p;
         preemptTime = a;
+        this.color=color;
     }
 
     public int getExecutedQuantum() {
