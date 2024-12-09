@@ -19,41 +19,31 @@ public class FCAIScheduler {
         double maxArrivalTime = 0;
         for (Process process : processes) {
             if (process.getArrivalTime() > maxArrivalTime)
-                maxArrivalTime = (double) process.getArrivalTime() / 10;
+                maxArrivalTime = (double) process.getArrivalTime();
         }
-        return maxArrivalTime;
+        return maxArrivalTime/10;
     }
 
     //Getting v2 (max burst time)
     public double getV2() {
         double maxBurstTime = 0;
         for (Process process : processes) {
-            if (process.getBurstTime() > maxBurstTime)
-                maxBurstTime = (double) process.getBurstTime() / 10;
+            if (process.getBurstTime() > maxBurstTime) {
+                maxBurstTime = ( (double) process.getBurstTime());
+            }
         }
-        return maxBurstTime;
+        return maxBurstTime/10;
     }
 
     //Function for calculation of fcai factor
     void calculateFcaiFactor(Process process) {
         int factor = (int) ceil(
                 (10 - process.getPriority())
-                        + ((double) process.getArrivalTime() / getV1()) +
-                        ((double) process.getRemainingBurstTime() / getV2())
+                        + ceil((double) process.getArrivalTime() / getV1()) +
+                        ceil((double) process.getRemainingBurstTime() / getV2())
         );
         process.setFcaiFactor(factor);
     }
-
-    //Ends the scheduling
-//    public boolean completeExecution(){
-//        boolean result = true;
-//        for(Process process:processes){
-//            if(process.getBurstTime() == 0){
-//                result = false;
-//            }
-//        }
-//        return result;
-//    }
 
 
     //running the process
@@ -107,8 +97,7 @@ public class FCAIScheduler {
                 currentProcess = readyQueue.getFirst();
                 index = 0;
             }
-//            assert currentProcess != null;
-//            currentProcess.setExecutedQuantum(0);
+
             assert currentProcess != null;
             currentProcess.getWait().add(time - currentProcess.getPreemptTime());
 
@@ -126,18 +115,34 @@ public class FCAIScheduler {
                 readyQueue.add(currentProcess);
                 readyQueue.sort(Comparator.comparingInt(Process::getFcaiFactor)); //adding the currentProcess after updating
 
-
                 //Process are entering ready queue based on arrival time
                 for (Process process : processes) {
                     if (process.getArrivalTime() == time && !readyQueue.contains(process)) {
                         calculateFcaiFactor(process);
                         readyQueue.add(process);
-                        readyQueue.sort(Comparator.comparingInt(Process::getFcaiFactor)); //Sort ready queue based on fcai factor each time new process arrives
+                        readyQueue.sort(
+                                Comparator.comparingInt(Process::getFcaiFactor) // Primary sorting by FCAI Factor
+                        );
+                        System.out.println("v1 equals "+ getV1());
+                        System.out.println("v2 equals " + getV2());
+                        System.out.println(process.getName() + " arrived and its intial remburttime is "+ process.getRemainingBurstTime());
+                        System.out.println(process.getName() + " arrived" + " its initial ff is: "+ process.getFcaiFactor());
+                        //Sort ready queue based on fcai factor each time new process arrive and if two same ff depend on arrivalTime
                     }
                 }
 
+//                if(readyQueue.size() == 3) {
+//                    System.out.println("This is the second process in the queue: " + readyQueue.get(1).getName() + " and its fcai factor is: " + readyQueue.get(1).getFcaiFactor());
+//                    System.out.println(readyQueue.get(2).getName() + " Fcai factor is: " + readyQueue.get(2).getFcaiFactor());
+//                    System.out.println(readyQueue.get(0).getName() +"and its fcai factor is "+ readyQueue.get(2).getFcaiFactor());
+//                }
+
+
+
                 System.out.println(currentProcess.getName());
-                System.out.println("\n" + "Time is " + time);
+                System.out.println("Time is " + time);
+
+
                 //Handle case if there is another process with lower fcaiFactor
                 if (readyQueue.get(index) != currentProcess || index != 0) {
                     switchProcess = true;
@@ -205,29 +210,16 @@ public class FCAIScheduler {
                 } else if (currentProcess.getRemainingBurstTime() == 0) {
                     break;
                 }
-//                System.out.println(currentProcess.getExecutedQuantum());
-//                System.out.println("V1 is : "+getV1());
-//                System.out.println("v2 is: " + getV2());
-//                System.out.println(currentProcess.getFcaiFactor());
-//                System.out.println(time);
-//                System.out.print(currentProcess.getReamininBurstTime());
-//                System.out.print("\n" + switchProcess + "\n");
             }
 
-//            //Process Completed
-//            if(currentProcess.getRemainingBurstTime() == 0) {
-//                readyQueue.remove(currentProcess);
-//                justExecutedProcess = null;
-//                System.out.println(currentProcess.getName() + " Completed \n");
-//            }
 
             if (currentProcess.getRemainingBurstTime() == 0) {
                 currentProcess.setTurnRoundTime(time - currentProcess.getArrivalTime());
                 readyQueue.remove(currentProcess);
                 justExecutedProcess = null;
                 System.out.println(currentProcess.getName() + " Completed \n");
-                for (Process process : readyQueue)
-                    System.out.println("B2olk ehhhh " + process.getName());
+//                for (Process process : readyQueue)
+//                    System.out.println("B2olk ehhhh " + process.getName());
             }
 
 //            System.out.println(readyQueue.get(0).getName());
