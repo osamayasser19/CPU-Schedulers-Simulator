@@ -145,4 +145,5 @@ public class SJFScheduler {
 
         System.out.println("Average Waiting Time: " + averageWaitingTime);
         System.out.println("Average Turnaround Time: " + averageTurnAroundTime);
-    }}
+    }
+}
