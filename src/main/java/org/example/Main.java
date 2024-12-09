@@ -15,33 +15,55 @@ public class Main {
         int contextSwitchTime = scanner.nextInt();
 
         for (int i = 0; i < numOfProcesses; i++) {
-            System.out.println("Enter details of process " + i + ": ");
+            System.out.println("Enter details of process " + (i + 1) + ": ");
 
             scanner.nextLine();
-            System.out.println("Enter name of process");
+            System.out.println("Enter name of Process:");
             String name = scanner.nextLine();
-            System.out.println("Enter arrival time ");
+            System.out.println("Enter Arrival Time:");
             int arrivalTime = scanner.nextInt();
-            System.out.println("Enter burst time ");
+            System.out.println("Enter Burst Time:");
             int burstTime = scanner.nextInt();
-            System.out.println("Enter priority");
+            System.out.println("Enter Priority:");
             int priority = scanner.nextInt();
-            System.out.println("Enter process quantum time");
+            System.out.println("Enter Quantum Time:");
             int quantumTime = scanner.nextInt();
 
 
             processes.add(new Process(name, arrivalTime, burstTime, priority));
             processes.get(i).setQuantum(quantumTime);
+            processes.get(i).setOldQuantum(quantumTime);//initialize the old quantum as the first quantum of the process
         }
-//        System.out.println(processes.get(0).getArrivalTime());
-//        System.out.println(processes.get(1).getArrivalTime());
+        System.out.println("Enter which Scheduler to use:\n" +
+                "1-Priority Scheduling\n" +
+                "2-Shortest Job First Scheduling\n" +
+                "3-Shortest Remaining Time First Scheduling\n" +
+                "4-FCAI Scheduling");
+        int option = scanner.nextInt();
+        switch (option) {
+            case 1:
+                NonPreemptivePriorityScheduler Priority = new NonPreemptivePriorityScheduler();
+                Priority.schedule(processes, contextSwitchTime);
+                break;
+            case 2:
+                SRTFScheduler SRTF = new SRTFScheduler(processes, contextSwitchTime);
+                SRTF.runSimulation();
+                break;
+            case 3:
+                SJFScheduler SJF = new SJFScheduler();
+                SJF.schedule(processes, contextSwitchTime);
+                break;
+            case 4:
+                FCAIScheduler fcaiScheduler = new FCAIScheduler(processes);
+                fcaiScheduler.schedule();
+                break;
+            default:
+                System.out.println("Invalid option");
+                break;
 
+        }
 //        FCAIScheduler fcaiScheduler = new FCAIScheduler(processes);
-//        fcaiScheduler.scheduler();
-//        NonPreemptivePriorityScheduler scheduler = new NonPreemptivePriorityScheduler();
-//        scheduler.schedule(processes, contextSwitchTime);
-        SRTFScheduler scheduler = new SRTFScheduler(processes, contextSwitchTime);
-        scheduler.runSimulation();
+//        fcaiScheduler.schedule();
         scanner.close();
 
     }

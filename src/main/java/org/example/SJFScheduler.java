@@ -1,34 +1,35 @@
 package org.example;
+
 import java.util.*;
 
 public class SJFScheduler {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter number of processes: ");
-        int numProcesses = scanner.nextInt();
-
-        System.out.print("Enter context switching time: ");
-        int contextSwitchingTime = scanner.nextInt();
-
-        List<Process> processes = new ArrayList<>();
-
-        for (int i = 0; i < numProcesses; i++) {
-            System.out.print("Enter process name: ");
-            String name = scanner.next();
-
-            System.out.print("Enter arrival time: ");
-            int arrivalTime = scanner.nextInt();
-
-            System.out.print("Enter burst time: ");
-            int burstTime = scanner.nextInt();
-
-            System.out.print("Enter priority: ");
-            int priority = scanner.nextInt();
-
-            processes.add(new Process(name, arrivalTime, burstTime, priority));
-        }
-
+//    public static void main(String[] args) {
+//        Scanner scanner = new Scanner(System.in);
+//
+//        System.out.print("Enter number of processes: ");
+//        int numProcesses = scanner.nextInt();
+//
+//        System.out.print("Enter context switching time: ");
+//        int contextSwitchingTime = scanner.nextInt();
+//
+//        List<Process> processes = new ArrayList<>();
+//
+//        for (int i = 0; i < numProcesses; i++) {
+//            System.out.print("Enter process name: ");
+//            String name = scanner.next();
+//
+//            System.out.print("Enter arrival time: ");
+//            int arrivalTime = scanner.nextInt();
+//
+//            System.out.print("Enter burst time: ");
+//            int burstTime = scanner.nextInt();
+//
+//            System.out.print("Enter priority: ");
+//            int priority = scanner.nextInt();
+//
+//            processes.add(new Process(name, arrivalTime, burstTime, priority));
+//        }
+        void schedule (List < Process > processes,int contextSwitchingTime){
         // Sort processes by arrival time
         processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
 
@@ -37,7 +38,7 @@ public class SJFScheduler {
         int completedProcesses = 0;
         List<Process> executionOrder = new ArrayList<>();
 
-        while (completedProcesses < numProcesses) {
+        while (completedProcesses < processes.size()) {
             Process currentProcess = null;
             int minBurstTime = Integer.MAX_VALUE;
 
@@ -71,8 +72,8 @@ public class SJFScheduler {
             totalTurnAroundTime += process.turnRoundTime;
         }
 
-        double averageWaitingTime = totalWaitingTime / numProcesses;
-        double averageTurnAroundTime = totalTurnAroundTime / numProcesses;
+        double averageWaitingTime = totalWaitingTime / processes.size();
+        double averageTurnAroundTime = totalTurnAroundTime / processes.size();
 
         // Output the results
         System.out.println("Processes execution order:");
@@ -92,5 +93,6 @@ public class SJFScheduler {
 
         System.out.println("Average Waiting Time: " + averageWaitingTime);
         System.out.println("Average Turnaround Time: " + averageTurnAroundTime);
-    }
+        }
+//    }
 }

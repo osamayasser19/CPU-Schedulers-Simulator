@@ -114,6 +114,9 @@
 
 package org.example;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Process {
     public String name;
     public int arrivalTime;
@@ -121,67 +124,104 @@ public class Process {
     public int burstTime;
     public int priority;
     public int turnRoundTime;
-    public int waitingTime;
+    public int waitingTime;//carry the total waiting time of a process
     public boolean startedExecution;
     public int fcaiFactor;
     public int Quantum;
+    private List<Integer> wait = new ArrayList<>();//carry all the wait times of a process
+    private int preemptTime;//the time when a process gets preempted
+    public int oldQuantum;//to carry the old quantum before updating
     public int executedTime = 0;
     public int executedQuantum = 0;
+    public int completionTime;
+
+    public int getPreemptTime() {
+        return preemptTime;
+    }
+
+    public void setPreemptTime(int preemptTime) {
+        this.preemptTime = preemptTime;
+    }
 
 
-    public Process(String n, int a,int b,int p){
+    public void setTurnRoundTime(int turnRoundTime) {
+        this.turnRoundTime = turnRoundTime;
+    }
+
+    public void setWaitingTime(int waitingTime) {
+        this.waitingTime = waitingTime;
+    }
+
+
+    public int getOldQuantum() {
+        return oldQuantum;
+    }
+
+    public void setOldQuantum(int oldQuantum) {
+        this.oldQuantum = oldQuantum;
+    }
+
+
+    public Process(String n, int a, int b, int p) {
         name = n;
         arrivalTime = a;
         burstTime = b;
         remainingBurstTime = b;
         priority = p;
+        preemptTime = a;
     }
 
-    public int getExecutedQuantum(){
+    public int getExecutedQuantum() {
         return executedQuantum;
     }
 
-    void setExecutedQuantum(int q){
+    void setExecutedQuantum(int q) {
         executedQuantum = q;
     }
 
-    void setExecutedTime(int t){
+    void setExecutedTime(int t) {
         executedTime = t;
     }
 
-    public int getExecutedTime(){
+    public int getExecutedTime() {
         return executedTime;
     }
 
-    void setFcaiFactor(int factor){
+    void setFcaiFactor(int factor) {
         fcaiFactor = factor;
-    };
+    }
 
-    public int getFcaiFactor(){
+    ;
+
+    public int getFcaiFactor() {
         return fcaiFactor;
-    };
+    }
 
-    void setQuantum(int quantum){
+    ;
+
+    void setQuantum(int quantum) {
         Quantum = quantum;
     }
 
-    public int getQuantum(){
+    public int getQuantum() {
         return Quantum;
     }
 
     public int getBurstTime() {
         return burstTime;
-    };
+    }
 
-    public void setBurstTime(int b){
+    ;
+
+    public void setBurstTime(int b) {
         burstTime = b;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public int getArrivalTime(){
+    public int getArrivalTime() {
         return arrivalTime;
     }
 
@@ -189,23 +229,31 @@ public class Process {
         return remainingBurstTime;
     }
 
-    void setRemainingBurstTime(int t){
+    void setRemainingBurstTime(int t) {
         remainingBurstTime = t;
     }
 
-    public int getPriority(){
+    public int getPriority() {
         return priority;
     }
 
-    public int getTurnRoundTime(){
+    public int getTurnRoundTime() {
         return turnRoundTime;
     }
 
-    public int getWaitingTime(){
+    public int getWaitingTime() {
         return waitingTime;
     }
 
     public boolean hasStartedExecution() {
         return startedExecution;
+    }
+
+    public List<Integer> getWait() {
+        return wait;
+    }
+
+    public void setWait(List<Integer> wait) {
+        this.wait = wait;
     }
 }
