@@ -87,7 +87,7 @@ public class FCAIScheduler {
             }
 
             assert currentProcess != null;
-            currentProcess.getWaitList().add(time - currentProcess.getPreemptTime());
+            currentProcess.getWaitList().add(time - currentProcess.getPreemptTime());//add to the wait list the time of the waiting of the process from the last time it executed
 
             System.out.println("Process " + currentProcess.getName() + " started execution at " + time);
 
@@ -149,7 +149,7 @@ public class FCAIScheduler {
 
                     //Adding currentProcess to the ready Queue after updating
                     readyQueue.add(currentProcess);
-                    System.out.println(currentProcess.getName() + " Updated Quantum is " + currentProcess.getOldQuantum() + "->" + currentProcess.getQuantum());
+                    System.out.println(currentProcess.getName() + " Updated Quantum is " + currentProcess.getOldQuantum() + " -> " + currentProcess.getQuantum());
                     System.out.println("---------------------------------------------\n");
                     currentProcess.setOldQuantum(currentProcess.getQuantum());
                     currentProcess.setPreemptTime(time);
@@ -177,7 +177,7 @@ public class FCAIScheduler {
 
                     //Adding the process to the queue again after updating
                     readyQueue.add(currentProcess);
-                    System.out.println(currentProcess.getName() + " Updated Quantum is " + currentProcess.getOldQuantum() + "->" + currentProcess.getQuantum());
+                    System.out.println(currentProcess.getName() + " Updated Quantum is " + currentProcess.getOldQuantum() + " -> " + currentProcess.getQuantum());
                     System.out.println("---------------------------------------------\n");
 
                     currentProcess.setOldQuantum(currentProcess.getQuantum());
@@ -226,7 +226,7 @@ public class FCAIScheduler {
                 total += waitTime;
             }
             process.setWaitingTime(total);
-            System.out.println(process.getName() + " wait Time: " + total + " Turnaround Time: " + process.getTurnRoundTime());
+            System.out.println(process.getName() + " Wait Time: " + total + " Turnaround Time: " + process.getTurnRoundTime());
             total = 0;
         }
     }

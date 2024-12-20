@@ -56,8 +56,8 @@ public class Main {
                 SRTF.runSimulation();
                 break;
             case 3:
-                SJFScheduler SJF = new SJFScheduler();
-                SJF.schedule(processes, contextSwitchTime);
+                SJFScheduler SJF = new SJFScheduler(processes, contextSwitchTime);
+                SJF.runSimulation();
                 break;
             case 4:
                 FCAIScheduler fcaiScheduler = new FCAIScheduler(processes);
