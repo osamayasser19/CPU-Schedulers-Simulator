@@ -57,6 +57,7 @@ public class Main {
                 break;
             case 3:
                 SJFScheduler SJF = new SJFScheduler(processes, contextSwitchTime);
+
                 SJF.runSimulation();
                 break;
             case 4:

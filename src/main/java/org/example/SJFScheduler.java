@@ -52,7 +52,7 @@ public class SJFScheduler {
         printResults(executionOrder);
         visualizeExecutionOrder(executionOrder);
     }
-
+//
     private static void printResults(List<String> executionOrder) {
         double totalWaitingTime = 0;
         double totalTurnaroundTime = 0;
