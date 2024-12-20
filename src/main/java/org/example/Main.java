@@ -30,13 +30,13 @@ public class Main {
             int priority = scanner.nextInt();
             System.out.println("Enter Quantum Time:");
             int quantumTime = scanner.nextInt();
-            System.out.print("Enter color for process " + name );
+            System.out.println("Enter color for process " + name + " :");
             String colorInput = scanner.next();
 
             Color color = parseColor(colorInput); // Parse the input string into a Color object
 
 
-            processes.add(new Process(name, arrivalTime, burstTime, priority,color));
+            processes.add(new Process(name, arrivalTime, burstTime, priority, color));
             processes.get(i).setQuantum(quantumTime);
             processes.get(i).setOldQuantum(quantumTime);//initialize the old quantum as the first quantum of the process
         }
@@ -70,6 +70,7 @@ public class Main {
         }
         scanner.close();
     }
+
     // Method to convert string color to Color object
     private static Color parseColor(String colorInput) {
         switch (colorInput.toLowerCase()) {

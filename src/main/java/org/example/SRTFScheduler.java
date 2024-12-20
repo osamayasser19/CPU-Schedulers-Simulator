@@ -86,7 +86,7 @@ public class SRTFScheduler {
         System.out.println("\nProcess Details:");
         System.out.println("Name       Arrival    Burst      Waiting    Turnaround Completion");
         for (Process process : processes) {
-            System.out.println(process.getColor() + "         " + process.getArrivalTime() + "          " +
+            System.out.println(process.getName() + "         " + process.getArrivalTime() + "          " +
                     process.getBurstTime() + "          " + process.getWaitingTime() + "            " +
                     process.getTurnRoundTime() + "        " + process.getCompletionTime());
         }

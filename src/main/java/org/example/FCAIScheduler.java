@@ -68,7 +68,6 @@ public class FCAIScheduler {
         }
 
         while (!readyQueue.isEmpty()) {
-
             //setting current process in case of the lowest ff process is just executed
             if (readyQueue.size() > 1) {
                 if (justExecutedProcess == readyQueue.get(0)) {
@@ -81,6 +80,7 @@ public class FCAIScheduler {
                     currentProcess = readyQueue.getFirst();
                     index = 0;
                 }
+
             } else {
                 currentProcess = readyQueue.getFirst();
                 index = 0;
@@ -110,8 +110,8 @@ public class FCAIScheduler {
                 time++;
 
                 calculateFcaiFactor(currentProcess);
-                readyQueue.add(currentProcess);
-                readyQueue.sort(Comparator.comparingInt(Process::getFcaiFactor)); //adding the currentProcess after updating
+                readyQueue.add(currentProcess); //adding the currentProcess after updating
+                readyQueue.sort(Comparator.comparingInt(Process::getFcaiFactor));
 
                 //Process are entering ready queue based on arrival time
                 for (Process process : processes) {
@@ -144,7 +144,6 @@ public class FCAIScheduler {
                     currentProcess.setQuantum(currentProcess.getQuantum() + remainingQuantum);
                     //Updating Fcai factor
                     calculateFcaiFactor(currentProcess);
-
                     //re-Initializing the quantum of zero
                     currentProcess.setExecutedQuantum(0); //re-initializing the executed quantum to 0 after finishing
 
@@ -199,7 +198,7 @@ public class FCAIScheduler {
                 currentProcess.setTurnRoundTime(time - currentProcess.getArrivalTime());
                 readyQueue.remove(currentProcess);
                 justExecutedProcess = null;
-                System.out.println(currentProcess.getName() + " Completed at" + time + "\n");
+                System.out.println(currentProcess.getName() + " Completed at " + time + "\n");
             }
 
             //Sort the readyQueue after each process execution
@@ -220,6 +219,7 @@ public class FCAIScheduler {
     }
 
     public void printWT_TT() {
+        System.out.println("-----------------------------------------");
         int total = 0;
         for (Process process : processes) {
             for (int waitTime : process.getWaitList()) {
@@ -233,13 +233,13 @@ public class FCAIScheduler {
 
     public void printAVG() {
         System.out.println("-----------------------------------------");
-        int avgWaitTime = 0;
-        int avgTurnaroundTime = 0;
+        int totalWaitTime = 0;
+        int totalTurnaroundTime = 0;
         for (Process process : processes) {
-            avgWaitTime += process.getWaitingTime();
-            avgTurnaroundTime += process.getTurnRoundTime();
+            totalWaitTime += process.getWaitingTime();
+            totalTurnaroundTime += process.getTurnRoundTime();
         }
-        System.out.println("Average Wait Time: " + (avgWaitTime / processes.size()) + "\nTurnaround Time: " + (avgTurnaroundTime / processes.size()));
+        System.out.println("Average Wait Time: " + (totalWaitTime / processes.size()) + "\nAverage Turnaround Time: " + (totalTurnaroundTime / processes.size()));
     }
 
     private Process findProcessByName(String name) {
@@ -250,66 +250,60 @@ public class FCAIScheduler {
         }
         return null; // Should never happen if the process exists
     }
-    
+
     private void visualizeExecutionOrder(List<String> executionOrder) {
-        // Create a new JFrame to display the execution order and process details
-        JFrame frame = new JFrame("Fcai Scheduler Execution Order");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Set the default close operation
-        frame.setSize(800, 600); // Set the size of the frame (increased to fit both graph and table)
+        JFrame frame = new JFrame("Fcai Scheduler Execution Order");        // create the main window to display the execution order and process details
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // close the application when the window is closed
+        frame.setSize(800, 600); // set the window size
 
-        // Create a main panel for the layout
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout()); // Use BorderLayout to add multiple components
 
-        // Create a subpanel to display the colors of the processes
-        JPanel colorPanel = new JPanel();
-        colorPanel.setLayout(new FlowLayout()); // Arrange the colors in a horizontal row
+        JPanel panel = new JPanel();//create the panel that hold the components
+        panel.setLayout(new BorderLayout()); // use BorderLayout to add multiple components
 
-        // Add color boxes (rectangles) for each process
-        for (Process process : processes) {
-            JLabel colorLabel = new JLabel();
-            colorLabel.setBackground(process.color);
+        JPanel colorPanel = new JPanel();//create a color panel that show each process color
+        colorPanel.setLayout(new FlowLayout()); // make the color panel arranged horizontally
+
+
+        for (Process process : processes) {//loop over each process and make a color box
+            JLabel colorLabel = new JLabel();//creating a new label
+            colorLabel.setBackground(process.color);//setting the color of the label to the color of the process
             colorLabel.setOpaque(true);
-            colorLabel.setPreferredSize(new Dimension(50, 30));  // Fixed size for the color labels
-            colorPanel.add(colorLabel);
+            colorLabel.setPreferredSize(new Dimension(50, 30));  //sizing the labels
+            colorPanel.add(colorLabel);//adding the box to the color panel component
         }
 
-        // Add the color panel to the main panel at the top
-        panel.add(colorPanel, BorderLayout.NORTH);
 
-        // Create a panel to visualize the execution order (graph)
-        JPanel executionPanel = new JPanel() {
+        panel.add(colorPanel, BorderLayout.NORTH);//adding the colorPanel to the north side of the main panel
+
+        JPanel executionPanel = new JPanel() {//creating an execution panel to visualize the execution order of the processes
             @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g); // Call the parent method to ensure proper painting
+            protected void paintComponent(Graphics g) {//overriding the paintComponent method to adjust it to our execution order
+                super.paintComponent(g); // call the main method
                 int xPosition = 50; // Initial position for drawing the processes on the horizontal axis
-                int scaleFactor = 10;  // You can adjust this scale factor to increase/decrease the width of the rectangles
-                int spacing = 20;  // Fixed spacing between the rectangles
+                int scaleFactor = 10;  // a factor for scaling the rectangles of each process
+                int spacing = 20;  // space between each process
 
-                // Loop through the execution order list and draw each process
-                for (String processName : executionOrder) {
-                    Process process = findProcessByName(processName); // Find the process based on its name
+
+                for (String processName : executionOrder) {//loop on the execution order list
+                    Process process = findProcessByName(processName); // find the process based on its name
                     g.setColor(process.color); // Set the color associated with the process
-                    // Calculate the width of the rectangle based on the burst time (or remaining time)
-                    int width = process.getBurstTime() * scaleFactor;
-                    g.fillRect(xPosition, 50, width, 50); // Draw a filled rectangle representing the process
-                    g.setColor(Color.BLACK); // Set the color to black for drawing borders and text
-                    g.drawRect(xPosition, 50, width, 50); // Draw the border of the rectangle
+                    int width = process.getBurstTime() * scaleFactor; //calculate the width of the box according to the burst time
+                    g.fillRect(xPosition, 50, width, 50); // drawing a filled rectangle representing the process
+                    g.setColor(Color.BLACK); // set the color to black for the border and text
+                    g.drawRect(xPosition, 50, width, 50); // drawing the border of the rectangle
                     g.drawString(processName, xPosition + 10, 80); // Draw the process name inside the rectangle
-                    xPosition += width + spacing;  // Add fixed spacing between the rectangles
+                    xPosition += width + spacing;  // updating the starting position for the next process
                 }
             }
         };
 
-        // Add the execution panel to the main panel
-        panel.add(executionPanel, BorderLayout.CENTER); // Add execution panel in the center
 
-        // Create the table to display process details
-        String[] columnNames = {"Name", "Arrival", "Burst", "Waiting", "Turnaround", "Color"};
-        Object[][] data = new Object[processes.size()][7];
+        panel.add(executionPanel, BorderLayout.CENTER); // adding the execution panel to the main panel in the center
 
-        // Fill the data array with process information
-        for (int i = 0; i < processes.size(); i++) {
+        String[] columnNames = {"Name", "Arrival", "Burst", "Waiting", "Turnaround", "Color"};//adding the name of each column to an array of strings
+        Object[][] data = new Object[processes.size()][7];//making a 2d array to fill with the data with width of 7 and hieght according to the processes size
+
+        for (int i = 0; i < processes.size(); i++) {//filling each row with process data
             Process process = processes.get(i);
             data[i][0] = process.getName();
             data[i][1] = process.getArrivalTime();
@@ -317,31 +311,30 @@ public class FCAIScheduler {
             data[i][3] = process.getWaitingTime();
             data[i][4] = process.getTurnRoundTime();
             data[i][5] = process.getCompletionTime();
-            data[i][6] = new JLabel(" ", JLabel.CENTER);  // Create an empty label to display color
-            ((JLabel) data[i][6]).setBackground(process.color); // Set the background color to match the process color
-            ((JLabel) data[i][6]).setOpaque(true);  // Make sure the label's background is visible
+            data[i][6] = new JLabel(" ", JLabel.CENTER);  //creating an empty label to display color
+            ((JLabel) data[i][6]).setBackground(process.color); // set the color to the process color
+            ((JLabel) data[i][6]).setOpaque(true);
         }
 
-        // Create a table to display the process details with color
-        JTable table = new JTable(data, columnNames);
-        table.setPreferredScrollableViewportSize(new Dimension(750, 300)); // Set preferred size of the table (smaller size)
 
-        // Make the table's columns more compact
-        table.getColumnModel().getColumn(0).setPreferredWidth(60); // Set width of "Name" column
-        table.getColumnModel().getColumn(1).setPreferredWidth(50); // Set width of "Arrival" column
-        table.getColumnModel().getColumn(2).setPreferredWidth(50); // Set width of "Burst" column
-        table.getColumnModel().getColumn(3).setPreferredWidth(60); // Set width of "Waiting" column
-        table.getColumnModel().getColumn(4).setPreferredWidth(80); // Set width of "Turnaround" column
+        JTable table = new JTable(data, columnNames);//making a table and adding the data and the column names to it
+        table.setPreferredScrollableViewportSize(new Dimension(750, 300)); // set the size of the table
 
-        // Add the table to a scroll pane for better viewing
-        JScrollPane tableScrollPane = new JScrollPane(table);
 
-        // Add the table scroll pane to the panel in the south section (below the graph)
-        panel.add(tableScrollPane, BorderLayout.SOUTH);
+        //set the width of each column
+        table.getColumnModel().getColumn(0).setPreferredWidth(60);
+        table.getColumnModel().getColumn(1).setPreferredWidth(50);
+        table.getColumnModel().getColumn(2).setPreferredWidth(50);
+        table.getColumnModel().getColumn(3).setPreferredWidth(60);
+        table.getColumnModel().getColumn(4).setPreferredWidth(80);
 
-        // Add the panel to the frame and make the frame visible
-        frame.add(panel);
-        frame.setVisible(true);
+        JScrollPane tableScrollPane = new JScrollPane(table);//add the table for a scroll panel
+
+        panel.add(tableScrollPane, BorderLayout.SOUTH);//adding the table to the main panel in the bottom
+
+
+        frame.add(panel);//adding the main panel to the frame
+        frame.setVisible(true);//making the frame visible
     }
 
 }
