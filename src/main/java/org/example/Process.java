@@ -5,13 +5,13 @@ import java.util.List;
 import java.awt.Color;
 
 public class Process {
-    private String name;
-    private int arrivalTime;
+     String name;
+     int arrivalTime;
     private int remainingBurstTime;
-    private int burstTime;
-    private int priority;
-    private int turnRoundTime;
-    private int waitingTime;//carry the total waiting time of a process
+     int burstTime;
+     int priority;
+     int turnRoundTime;
+     int waitingTime;//carry the total waiting time of a process
     private boolean startedExecution;
     private int fcaiFactor;
     private int Quantum;
