@@ -9,7 +9,7 @@ public class SJFScheduler {
 
     void schedule(List<Process> processes, int contextSwitchingTime) {
         // Sort processes by arrival time
-        processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
+
 
         int currentTime = 0;
         int completedProcesses = 0;
@@ -17,12 +17,14 @@ public class SJFScheduler {
         List<String> processTimeline = new ArrayList<>();
 
         while (completedProcesses < processes.size()) {
+            processes.sort(Comparator.comparingInt(p -> p.getArrivalTime()));
+            processes.sort(Comparator.comparingInt(p -> p.getBurstTime()));
             Process currentProcess = null;
             int minBurstTime = Integer.MAX_VALUE;
 
             for (Process process : processes) {
-                if (process.arrivalTime <= currentTime && !process.startedExecution && process.remainingBurstTime < minBurstTime) {
-                    minBurstTime = process.remainingBurstTime;
+                if (process.getArrivalTime() <= currentTime && !process.hasStartedExecution() && process.getRemainingBurstTime() < minBurstTime) {
+                    minBurstTime = process.getRemainingBurstTime();
                     currentProcess = process;
                 }
             }
@@ -33,17 +35,17 @@ public class SJFScheduler {
                 continue;
             }
 
-            currentProcess.startedExecution = true;
-            currentProcess.waitingTime = currentTime - currentProcess.arrivalTime;
+            currentProcess.setStartedExecution(true);
+            currentProcess.setWaitingTime(currentTime - currentProcess.getArrivalTime());
 
             // Add the process name to the timeline for its burst duration
-            for (int i = 0; i < currentProcess.burstTime; i++) {
-                processTimeline.add(currentProcess.name);
+            for (int i = 0; i < currentProcess.getBurstTime(); i++) {
+                processTimeline.add(currentProcess.getName());
             }
 
-            currentTime += currentProcess.burstTime + contextSwitchingTime;
-            currentProcess.turnRoundTime = currentTime - currentProcess.arrivalTime;
-            currentProcess.remainingBurstTime = 0;
+            currentTime += currentProcess.getBurstTime() + contextSwitchingTime;
+            currentProcess.setTurnRoundTime(currentTime - currentProcess.getArrivalTime());
+            currentProcess.setRemainingBurstTime(0);
             executionOrder.add(currentProcess);
             completedProcesses++;
         }
@@ -81,12 +83,12 @@ public class SJFScheduler {
                 }
 
                 Process process = processes.stream()
-                        .filter(p -> p.name.equals(processName))
+                        .filter(p -> p.getName().equals(processName))
                         .findFirst()
                         .orElse(null);
 
                 if (process != null) {
-                    int width = process.burstTime * 20; // Width based on burst time
+                    int width = process.getBurstTime() * 20; // Width based on burst time
 
                     // Create a panel for each process
                     JPanel processPanel = new JPanel();
@@ -121,8 +123,8 @@ public class SJFScheduler {
         double totalTurnAroundTime = 0;
 
         for (Process process : processes) {
-            totalWaitingTime += process.waitingTime;
-            totalTurnAroundTime += process.turnRoundTime;
+            totalWaitingTime += process.getWaitingTime();
+            totalTurnAroundTime += process.getTurnRoundTime();
         }
 
         double averageWaitingTime = totalWaitingTime / processes.size();
@@ -130,17 +132,17 @@ public class SJFScheduler {
 
         System.out.println("Processes execution order:");
         for (Process process : processes) {
-            System.out.println(process.name);
+            System.out.println(process.getName());
         }
 
         System.out.println("Waiting Time for each process:");
         for (Process process : processes) {
-            System.out.println(process.name + ": " + process.waitingTime);
+            System.out.println(process.getName() + ": " + process.getWaitingTime());
         }
 
         System.out.println("Turnaround Time for each process:");
         for (Process process : processes) {
-            System.out.println(process.name + ": " + process.turnRoundTime);
+            System.out.println(process.getName() + ": " + process.getTurnRoundTime());
         }
 
         System.out.println("Average Waiting Time: " + averageWaitingTime);

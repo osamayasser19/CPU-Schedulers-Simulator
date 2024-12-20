@@ -4,20 +4,19 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.*;
 
-public class SRTFScheduler extends Scheduler {
+public class SRTFScheduler {
     private List<Process> processes;
     private int contextSwitchTime;
 
     public SRTFScheduler(List<Process> processes1, int contextSwitchTime) {
         this.processes = processes1;
         this.contextSwitchTime = contextSwitchTime;
-        processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
+        processes.sort(Comparator.comparingInt(p -> p.getArrivalTime()));
 
     }
+
     public void runSimulation() {
         int currentTime = 0;
         int completed = 0;
@@ -29,8 +28,8 @@ public class SRTFScheduler extends Scheduler {
             // Select the process with the shortest remaining time that has arrived
             Process nextProcess = null;
             for (Process process : processes) {
-                if (process.arrivalTime <= currentTime && process.remainingBurstTime > 0) {
-                    if (nextProcess == null || process.remainingBurstTime < nextProcess.remainingBurstTime) {
+                if (process.getArrivalTime() <= currentTime && process.getRemainingBurstTime() > 0) {
+                    if (nextProcess == null || process.getRemainingBurstTime() < nextProcess.getRemainingBurstTime()) {
                         nextProcess = process;
                     }
                 }
@@ -45,18 +44,18 @@ public class SRTFScheduler extends Scheduler {
             }
 
             // Execute the current process
-            if (currentProcess != null ) {
-                if (executionOrder.isEmpty() || !executionOrder.get(executionOrder.size() - 1).equals(currentProcess.name)) {
-                    executionOrder.add(currentProcess.name);
+            if (currentProcess != null) {
+                if (executionOrder.isEmpty() || !executionOrder.get(executionOrder.size() - 1).equals(currentProcess.getName())) {
+                    executionOrder.add(currentProcess.getName());
                 }
-                currentProcess.remainingBurstTime--;
+                currentProcess.setRemainingBurstTime(currentProcess.getRemainingBurstTime() - 1);
 
                 // If the process is completed
-                if (currentProcess.remainingBurstTime == 0) {
+                if (currentProcess.getRemainingBurstTime() == 0) {
                     completed++;
-                    currentProcess.completionTime = currentTime + 1;
-                    currentProcess.turnRoundTime = currentProcess.completionTime - currentProcess.arrivalTime;
-                    currentProcess.waitingTime = currentProcess.turnRoundTime - currentProcess.burstTime;
+                    currentProcess.setCompletionTime(currentTime + 1);
+                    currentProcess.setTurnRoundTime(currentProcess.getCompletionTime() - currentProcess.getArrivalTime());
+                    currentProcess.setWaitingTime(currentProcess.getTurnRoundTime() - currentProcess.getBurstTime());
                 }
             }
 
@@ -74,8 +73,8 @@ public class SRTFScheduler extends Scheduler {
 
         // Calculate averages
         for (Process process : processes) {
-            totalWaitingTime += process.waitingTime;
-            totalTurnaroundTime += process.turnRoundTime;
+            totalWaitingTime += process.getWaitingTime();
+            totalTurnaroundTime += process.getTurnRoundTime();
         }
 
         double averageWaitingTime = totalWaitingTime / processes.size();
@@ -87,9 +86,9 @@ public class SRTFScheduler extends Scheduler {
         System.out.println("\nProcess Details:");
         System.out.println("Name       Arrival    Burst      Waiting    Turnaround Completion");
         for (Process process : processes) {
-            System.out.println(process.name + "         " + process.arrivalTime + "          " +
-                    process.burstTime + "          " + process.waitingTime + "            " +
-                    process.turnRoundTime + "        " + process.completionTime);
+            System.out.println(process.getColor() + "         " + process.getArrivalTime() + "          " +
+                    process.getBurstTime() + "          " + process.getWaitingTime() + "            " +
+                    process.getTurnRoundTime() + "        " + process.getCompletionTime());
         }
 
         // Direct output of averages without formatting
@@ -138,7 +137,7 @@ public class SRTFScheduler extends Scheduler {
                     Process process = findProcessByName(processName); // Find the process based on its name
                     g.setColor(process.color); // Set the color associated with the process
                     // Calculate the width of the rectangle based on the burst time (or remaining time)
-                    int width = process.burstTime * scaleFactor;
+                    int width = process.getBurstTime() * scaleFactor;
                     g.fillRect(xPosition, 50, width, 50); // Draw a filled rectangle representing the process
                     g.setColor(Color.BLACK); // Set the color to black for drawing borders and text
                     g.drawRect(xPosition, 50, width, 50); // Draw the border of the rectangle
@@ -158,12 +157,12 @@ public class SRTFScheduler extends Scheduler {
         // Fill the data array with process information
         for (int i = 0; i < processes.size(); i++) {
             Process process = processes.get(i);
-            data[i][0] = process.name;
-            data[i][1] = process.arrivalTime;
-            data[i][2] = process.burstTime;
-            data[i][3] = process.waitingTime;
-            data[i][4] = process.turnRoundTime;
-            data[i][5] = process.completionTime;
+            data[i][0] = process.getName();
+            data[i][1] = process.getArrivalTime();
+            data[i][2] = process.getBurstTime();
+            data[i][3] = process.getWaitingTime();
+            data[i][4] = process.getTurnRoundTime();
+            data[i][5] = process.getCompletionTime();
             data[i][6] = new JLabel(" ", JLabel.CENTER);  // Create an empty label to display color
             ((JLabel) data[i][6]).setBackground(process.color); // Set the background color to match the process color
             ((JLabel) data[i][6]).setOpaque(true);  // Make sure the label's background is visible
@@ -196,7 +195,7 @@ public class SRTFScheduler extends Scheduler {
     // Method to find a process by its name
     private Process findProcessByName(String name) {
         for (Process process : processes) {
-            if (process.name.equals(name)) {
+            if (process.getName().equals(name)) {
                 return process; // Return the process if it matches the name
             }
         }

@@ -11,7 +11,6 @@ public class FCAIScheduler {
     List<Process> processes = new ArrayList<>();
     List<Process> readyQueue = new ArrayList<>();
     List<String> executionOrder = new ArrayList<>();
-    int counter = 0;
 
     public FCAIScheduler(List<Process> Processes) {
         Processes.sort(Comparator.comparingInt(Process::getArrivalTime)); // Sort processes by arrivalTime in ascending order
@@ -25,7 +24,7 @@ public class FCAIScheduler {
             if (process.getArrivalTime() > maxArrivalTime)
                 maxArrivalTime = (double) process.getArrivalTime();
         }
-        return maxArrivalTime/10;
+        return maxArrivalTime / 10;
     }
 
     //Getting v2 (max burst time)
@@ -33,10 +32,10 @@ public class FCAIScheduler {
         double maxBurstTime = 0;
         for (Process process : processes) {
             if (process.getBurstTime() > maxBurstTime) {
-                maxBurstTime = ( (double) process.getBurstTime());
+                maxBurstTime = ((double) process.getBurstTime());
             }
         }
-        return maxBurstTime/10;
+        return maxBurstTime / 10;
     }
 
     //Function for calculation of fcai factor
@@ -50,16 +49,14 @@ public class FCAIScheduler {
     }
 
 
-
     //running the process
     void runProcess(Process process) {
-//        executedQuantum++;
         process.setExecutedTime(process.getExecutedTime() + 1); //getting the total executed time for the process
         process.setRemainingBurstTime(process.getRemainingBurstTime() - 1); //getting the remaining burst time for the process
     }
 
     void schedule() {
-        int time = 0, executedQuantum = 0, index = 0 , oldTime = 0;
+        int time = 0, executedQuantum = 0, index = 0, oldTime = 0;
         Process currentProcess = null;
         Process justExecutedProcess = null;
         boolean switchProcess = false;
@@ -90,15 +87,14 @@ public class FCAIScheduler {
             }
 
             assert currentProcess != null;
-            currentProcess.getWait().add(time - currentProcess.getPreemptTime());
+            currentProcess.getWaitList().add(time - currentProcess.getPreemptTime());
 
-            System.out.println("Process "+ currentProcess.getName() + " started execution at " + time);
+            System.out.println("Process " + currentProcess.getName() + " started execution at " + time);
 
 
-            if(executionOrder.isEmpty()){
+            if (executionOrder.isEmpty()) {
                 executionOrder.add(currentProcess.getName());
-            }
-            else {
+            } else {
                 if (executionOrder.getLast() != currentProcess.getName()) {
                     executionOrder.add(currentProcess.getName());
                 }
@@ -129,7 +125,6 @@ public class FCAIScheduler {
                 }
 
 
-
                 //Handle case if there is another process with lower fcaiFactor
                 if (readyQueue.get(index) != currentProcess || index != 0) {
                     switchProcess = true;
@@ -138,7 +133,6 @@ public class FCAIScheduler {
 
                 //In case one of lower fcaiFactor arrived
                 int preempt = (int) ceil(currentProcess.getQuantum() * 0.4);
-//                System.out.println(preempt);
                 if (preempt <= currentProcess.getExecutedQuantum() && switchProcess) {
 
                     System.out.println(currentProcess.getName() + " executed for " + currentProcess.getExecutedQuantum() + " seconds and preempted at " + time);
@@ -205,7 +199,7 @@ public class FCAIScheduler {
                 currentProcess.setTurnRoundTime(time - currentProcess.getArrivalTime());
                 readyQueue.remove(currentProcess);
                 justExecutedProcess = null;
-                System.out.println(currentProcess.getName() + " Completed at" + time+ "\n");
+                System.out.println(currentProcess.getName() + " Completed at" + time + "\n");
             }
 
             //Sort the readyQueue after each process execution
@@ -219,7 +213,7 @@ public class FCAIScheduler {
         printWT_TT();
         printAVG();
 
-        for(String string:executionOrder){
+        for (String string : executionOrder) {
             System.out.print(string + "->");
         }
         visualizeExecutionOrder(executionOrder); // Visualize the execution order
@@ -228,7 +222,7 @@ public class FCAIScheduler {
     public void printWT_TT() {
         int total = 0;
         for (Process process : processes) {
-            for (int waitTime : process.getWait()) {
+            for (int waitTime : process.getWaitList()) {
                 total += waitTime;
             }
             process.setWaitingTime(total);
@@ -250,14 +244,13 @@ public class FCAIScheduler {
 
     private Process findProcessByName(String name) {
         for (Process process : processes) {
-            if (process.name.equals(name)) {
+            if (process.getName().equals(name)) {
                 return process; // Return the process if it matches the name
             }
         }
         return null; // Should never happen if the process exists
     }
-
-
+    
     private void visualizeExecutionOrder(List<String> executionOrder) {
         // Create a new JFrame to display the execution order and process details
         JFrame frame = new JFrame("Fcai Scheduler Execution Order");
@@ -298,7 +291,7 @@ public class FCAIScheduler {
                     Process process = findProcessByName(processName); // Find the process based on its name
                     g.setColor(process.color); // Set the color associated with the process
                     // Calculate the width of the rectangle based on the burst time (or remaining time)
-                    int width = process.burstTime * scaleFactor;
+                    int width = process.getBurstTime() * scaleFactor;
                     g.fillRect(xPosition, 50, width, 50); // Draw a filled rectangle representing the process
                     g.setColor(Color.BLACK); // Set the color to black for drawing borders and text
                     g.drawRect(xPosition, 50, width, 50); // Draw the border of the rectangle
@@ -318,12 +311,12 @@ public class FCAIScheduler {
         // Fill the data array with process information
         for (int i = 0; i < processes.size(); i++) {
             Process process = processes.get(i);
-            data[i][0] = process.name;
-            data[i][1] = process.arrivalTime;
-            data[i][2] = process.burstTime;
-            data[i][3] = process.waitingTime;
-            data[i][4] = process.turnRoundTime;
-            data[i][5] = process.completionTime;
+            data[i][0] = process.getName();
+            data[i][1] = process.getArrivalTime();
+            data[i][2] = process.getBurstTime();
+            data[i][3] = process.getWaitingTime();
+            data[i][4] = process.getTurnRoundTime();
+            data[i][5] = process.getCompletionTime();
             data[i][6] = new JLabel(" ", JLabel.CENTER);  // Create an empty label to display color
             ((JLabel) data[i][6]).setBackground(process.color); // Set the background color to match the process color
             ((JLabel) data[i][6]).setOpaque(true);  // Make sure the label's background is visible

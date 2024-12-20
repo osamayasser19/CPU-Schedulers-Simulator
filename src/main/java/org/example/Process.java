@@ -1,186 +1,116 @@
-//package org.example;
-//public class Process {
-//    String name;
-//    int arrivalTime;
-//    public int remainingBurstTime;
-//    public int burstTime;
-//    public int priority;
-//    public int turnRoundTime;
-//    public int waitingTime;
-//    public boolean startedExecution= false;
-//    private int fcaiFactor;
-//    private int Quantum;
-//    private int executedTime;
-//    private int completionTime;
-//    public Process(String n, int a, int b, int p) {
-//        name = n;
-//        arrivalTime = a;
-//        burstTime = b;
-//        remainingBurstTime = b;
-//        priority = p;
-//    }
-//
-//    void setExecutedTime(int t) {
-//        executedTime = t;
-//    }
-//
-//    public int getExecutedTime() {
-//        return executedTime;
-//    }
-//
-//    void setFcaiFcator(int factor) {
-//        fcaiFactor = factor;
-//    }
-//
-//
-//
-//    public int getFcaiFactor() {
-//        return fcaiFactor;
-//    }
-//
-//
-//
-//    void setQuantum(int quantum) {
-//        Quantum = quantum;
-//    }
-//
-//    public int getQuantum() {
-//        return Quantum;
-//    }
-//
-//    public int getBurstTime() {
-//        return burstTime;
-//    }
-//
-//    public void setTurnRoundTime(int turnRoundTime) {
-//        this.turnRoundTime = turnRoundTime;
-//    }
-//
-//    public void setWaitingTime(int waitingTime) {
-//        this.waitingTime = waitingTime;
-//    }
-//
-//    public void setBurstTime(int b) {
-//        burstTime = b;
-//    }
-//
-//    public String getName() {
-//        return name;
-//    }
-//
-//    public int getArrivalTime() {
-//        return arrivalTime;
-//    }
-//
-//    public int getReamininBurstTime() {
-//        return remainingBurstTime;
-//    }
-//
-//    void setRemainingBurstTime(int time){
-//        remainingBurstTime = time;
-//    }
-//
-//
-//
-//    public int getPriority() {
-//        return priority;
-//    }
-//
-//    public int getTurnRoundTime() {
-//        return turnRoundTime;
-//    }
-//
-//    public int getWaitingTime() {
-//        return waitingTime;
-//    }
-//
-//    // New method to set the completion time
-//    public void setCompletionTime(int time) {
-//        this.completionTime = time;
-//    }
-//    // New method to get the completion time
-//    public int getCompletionTime() {
-//        return completionTime;
-//    }
-//    // New method to mark that the process has started execution
-//    public void setStartedExecution(boolean started) {
-//        this.startedExecution = started;
-//    }
-//    public boolean hasStartedExecution() {
-//        return startedExecution;
-//    }
-//}
-
-
 package org.example;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.Color;
+
 public class Process {
-    public String name;
-    public int arrivalTime;
-    public int remainingBurstTime;
-    public int burstTime;
-    public int priority;
-    public int turnRoundTime;
-    public int waitingTime;//carry the total waiting time of a process
-    public boolean startedExecution;
-    public int fcaiFactor;
-    public int Quantum;
+    private String name;
+    private int arrivalTime;
+    private int remainingBurstTime;
+    private int burstTime;
+    private int priority;
+    private int turnRoundTime;
+    private int waitingTime;//carry the total waiting time of a process
+    private boolean startedExecution;
+    private int fcaiFactor;
+    private int Quantum;
     private List<Integer> wait = new ArrayList<>();//carry all the wait times of a process
     private int preemptTime;//the time when a process gets preempted
-    public int oldQuantum;//to carry the old quantum before updating
-    public int executedTime = 0;
-    public int executedQuantum = 0;
-    public int completionTime;
+    private int oldQuantum;//to carry the old quantum before updating
+    private int executedTime = 0;
+    private int executedQuantum = 0;
+    private int completionTime;
     Color color;
-    public int getPreemptTime() {
-        return preemptTime;
-    }
-
-    public void setPreemptTime(int preemptTime) {
-        this.preemptTime = preemptTime;
-    }
 
 
-    public void setTurnRoundTime(int turnRoundTime) {
-        this.turnRoundTime = turnRoundTime;
-    }
-
-    public void setWaitingTime(int waitingTime) {
-        this.waitingTime = waitingTime;
-    }
-
-
-    public int getOldQuantum() {
-        return oldQuantum;
-    }
-
-    public void setOldQuantum(int oldQuantum) {
-        this.oldQuantum = oldQuantum;
-    }
-
-
-    public Process(String n, int a, int b, int p,Color color) {
+    public Process(String n, int a, int b, int p, Color color) {
         name = n;
         arrivalTime = a;
         burstTime = b;
         remainingBurstTime = b;
         priority = p;
         preemptTime = a;
-        this.color=color;
+        this.color = color;
+    }
+
+
+    ////////////////////////Setters and Getters///////////////////////////////////////
+
+    public void setPreemptTime(int preemptTime) {
+        this.preemptTime = preemptTime;
+    }
+
+    public int getPreemptTime() {
+        return preemptTime;
+    }
+
+    //--------------------------------------------------------------------------------------------------------//
+    public void setStartedExecution(boolean startedExecution) {
+        this.startedExecution = startedExecution;
+    }
+
+    public boolean hasStartedExecution() {
+        return startedExecution;
+    }
+
+    //--------------------------------------------------------------------------------------------------------//
+    public void setCompletionTime(int completionTime) {
+
+        this.completionTime = completionTime;
+    }
+
+    public int getCompletionTime() {
+        return completionTime;
+    }
+
+    //--------------------------------------------------------------------------------------------------------//
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    //--------------------------------------------------------------------------------------------------------//
+    public void setTurnRoundTime(int turnRoundTime) {
+        this.turnRoundTime = turnRoundTime;
+    }
+
+    public int getTurnRoundTime() {
+        return turnRoundTime;
+    }
+    //--------------------------------------------------------------------------------------------------------//
+
+    public void setWaitingTime(int waitingTime) {
+        this.waitingTime = waitingTime;
+    }
+
+    public int getWaitingTime() {
+        return waitingTime;
+    }
+
+    //--------------------------------------------------------------------------------------------------------//
+    public void setOldQuantum(int oldQuantum) {
+        this.oldQuantum = oldQuantum;
+    }
+
+    public int getOldQuantum() {
+        return oldQuantum;
+    }
+
+    //--------------------------------------------------------------------------------------------------------//
+    public void setExecutedQuantum(int q) {
+        executedQuantum = q;
     }
 
     public int getExecutedQuantum() {
         return executedQuantum;
     }
 
-    void setExecutedQuantum(int q) {
-        executedQuantum = q;
-    }
-
-    void setExecutedTime(int t) {
+    //--------------------------------------------------------------------------------------------------------//
+    public void setExecutedTime(int t) {
         executedTime = t;
     }
 
@@ -188,19 +118,17 @@ public class Process {
         return executedTime;
     }
 
-    void setFcaiFactor(int factor) {
+    //--------------------------------------------------------------------------------------------------------//
+    public void setFcaiFactor(int factor) {
         fcaiFactor = factor;
     }
-
-    ;
 
     public int getFcaiFactor() {
         return fcaiFactor;
     }
 
-    ;
-
-    void setQuantum(int quantum) {
+    //--------------------------------------------------------------------------------------------------------//
+    public void setQuantum(int quantum) {
         Quantum = quantum;
     }
 
@@ -208,14 +136,19 @@ public class Process {
         return Quantum;
     }
 
-    public int getBurstTime() {
-        return burstTime;
+    //--------------------------------------------------------------------------------------------------------//
+    public void setRemainingBurstTime(int t) {
+        remainingBurstTime = t;
     }
 
-    ;
+    public int getRemainingBurstTime() {
+        return remainingBurstTime;
+    }
+    //--------------------------------------------------------------------------------------------------------//
 
-    public void setBurstTime(int b) {
-        burstTime = b;
+
+    public int getBurstTime() {
+        return burstTime;
     }
 
     public String getName() {
@@ -226,35 +159,11 @@ public class Process {
         return arrivalTime;
     }
 
-    public int getRemainingBurstTime() {
-        return remainingBurstTime;
-    }
-
-    void setRemainingBurstTime(int t) {
-        remainingBurstTime = t;
-    }
-
     public int getPriority() {
         return priority;
     }
 
-    public int getTurnRoundTime() {
-        return turnRoundTime;
-    }
-
-    public int getWaitingTime() {
-        return waitingTime;
-    }
-
-    public boolean hasStartedExecution() {
-        return startedExecution;
-    }
-
-    public List<Integer> getWait() {
+    public List<Integer> getWaitList() {
         return wait;
-    }
-
-    public void setWait(List<Integer> wait) {
-        this.wait = wait;
     }
 }

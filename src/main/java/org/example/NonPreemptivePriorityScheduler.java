@@ -1,4 +1,5 @@
 package org.example;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.List;
 
 public class NonPreemptivePriorityScheduler {
     public void schedule(List<Process> processes, int contextSwitchTime) {
-        processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
+        processes.sort(Comparator.comparingInt(p -> p.getArrivalTime()));
         int currentTime = 0;
         List<Process> scheduledProcesses = new ArrayList<>();
         List<ExecutionStep> executionSteps = new ArrayList<>();
@@ -15,8 +16,8 @@ public class NonPreemptivePriorityScheduler {
         while (!processes.isEmpty()) {
             int finalCurrentTime = currentTime;
             Process nextProcess = processes.stream()
-                    .filter(p -> p.arrivalTime <= finalCurrentTime)
-                    .min(Comparator.comparingInt(p -> p.priority))
+                    .filter(p -> p.getArrivalTime() <= finalCurrentTime)
+                    .min(Comparator.comparingInt(p -> p.getPriority()))
                     .orElse(null);
 
             if (nextProcess == null) {
@@ -29,15 +30,15 @@ public class NonPreemptivePriorityScheduler {
                 currentTime += contextSwitchTime;
             }
 
-            nextProcess.waitingTime = currentTime - nextProcess.arrivalTime;
-            currentTime += nextProcess.burstTime;
-            nextProcess.turnRoundTime = currentTime - nextProcess.arrivalTime;
+            nextProcess.setWaitingTime(currentTime - nextProcess.getArrivalTime());
+            currentTime += nextProcess.getBurstTime();
+            nextProcess.setTurnRoundTime(currentTime - nextProcess.getArrivalTime());
 
             scheduledProcesses.add(nextProcess);
-            executionSteps.add(new ExecutionStep(nextProcess, currentTime - nextProcess.burstTime, currentTime));
+            executionSteps.add(new ExecutionStep(nextProcess, currentTime - nextProcess.getBurstTime(), currentTime));
 
-            System.out.println("Process " + nextProcess.name + " starts at time "
-                    + (currentTime - nextProcess.burstTime) + " and finishes at time " + currentTime);
+            System.out.println("Process " + nextProcess.getName() + " starts at time "
+                    + (currentTime - nextProcess.getBurstTime()) + " and finishes at time " + currentTime);
         }
 
         printResults(scheduledProcesses);
@@ -49,10 +50,10 @@ public class NonPreemptivePriorityScheduler {
         int totalWaitingTime = 0;
         int totalTurnRoundTime = 0;
         for (Process process : processes) {
-            totalWaitingTime += process.waitingTime;
-            totalTurnRoundTime += process.turnRoundTime;
-            System.out.println("Process " + process.name + ": Waiting Time = "
-                    + process.waitingTime + ", Turnaround Time = " + process.turnRoundTime);
+            totalWaitingTime += process.getWaitingTime();
+            totalTurnRoundTime += process.getTurnRoundTime();
+            System.out.println("Process " + process.getName() + ": Waiting Time = "
+                    + process.getWaitingTime() + ", Turnaround Time = " + process.getTurnRoundTime());
         }
         System.out.println("Average Waiting Time = " + (double) totalWaitingTime / processes.size());
         System.out.println("Average Turnaround Time = " + (double) totalTurnRoundTime / processes.size());
@@ -78,7 +79,7 @@ public class NonPreemptivePriorityScheduler {
                     g.fillRect(x, y, width, height);
                     g.setColor(Color.BLACK);
                     g.drawRect(x, y, width, height); // Outline for visibility
-                    g.drawString(step.process.name + " (" + step.startTime + "-" + step.endTime + ")",
+                    g.drawString(step.process.getName() + " (" + step.startTime + "-" + step.endTime + ")",
                             x + 20, y + 30);
                     x += width;
                 }
@@ -92,12 +93,12 @@ public class NonPreemptivePriorityScheduler {
         // Fill the data array with process information
         for (int i = 0; i < processes.size(); i++) {
             Process process = processes.get(i);
-            data[i][0] = process.name;
-            data[i][1] = process.arrivalTime;
-            data[i][2] = process.burstTime;
-            data[i][3] = process.waitingTime;
-            data[i][4] = process.turnRoundTime;
-            data[i][5] = process.turnRoundTime + process.arrivalTime; // Completion time
+            data[i][0] = process.getName();
+            data[i][1] = process.getArrivalTime();
+            data[i][2] = process.getBurstTime();
+            data[i][3] = process.getWaitingTime();
+            data[i][4] = process.getTurnRoundTime();
+            data[i][5] = process.getTurnRoundTime() + process.getArrivalTime(); // Completion time
 
             JLabel colorLabel = new JLabel();
             colorLabel.setBackground(process.color);
