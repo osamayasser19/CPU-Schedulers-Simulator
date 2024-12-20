@@ -97,8 +97,6 @@ public class NonPreemptivePriorityScheduler {
             data[i][2] = process.burstTime;
             data[i][3] = process.waitingTime;
             data[i][4] = process.turnRoundTime;
-//            data[i][5] = process.turnRoundTime + process.arrivalTime; // Completion time
-
             JLabel colorLabel = new JLabel();
             colorLabel.setBackground(process.color);
             colorLabel.setOpaque(true); // Ensure color is visible
@@ -116,8 +114,6 @@ public class NonPreemptivePriorityScheduler {
         table.getColumnModel().getColumn(3).setPreferredWidth(60); // Set width of "Waiting" column
         table.getColumnModel().getColumn(4).setPreferredWidth(80); // Set width of "Turnaround" column
         table.getColumnModel().getColumn(5).setPreferredWidth(80); // Set width of "Completion" column
-//        table.getColumnModel().getColumn(6).setPreferredWidth(60); // Set width of "Color" column
-
         // Add the table to a scroll pane for better viewing
         JScrollPane tableScrollPane = new JScrollPane(table);
 
